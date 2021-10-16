@@ -1,51 +1,29 @@
 import React, {useEffect} from 'react';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
-import axios from 'axios';
-import Swal from 'sweetalert2'
+import {connect} from 'react-redux';
+import {Dispatch} from 'redux';
 
+import {login} from '../../store/actions/actionCreators'
+import {State} from "../../store/store";
 import './login.css';
 
 interface ILoginProps extends RouteComponentProps {
     loginData: { username: string, password: string };
     handleChange(e: React.FormEvent<HTMLInputElement>): void
-};
+    loginHandler(loginData: { username: string, password: string }): void;
+    token: string
+}
 
 const Login: React.FC<ILoginProps> = (props) => {
+    const {loginData, handleChange, loginHandler, token} = props;
     useEffect(() => {
-        /*const token = window.localStorage.getItem("access-token")
         if (token) {
-            console.log("props: ", props)
             props.history.push("/")
-        }*/
-    }, [])
-    const {loginData, handleChange} = props;
+        }
+    }, [props.history, token])
     const submitHandle = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        axios.post("https://zones-backend-halan.herokuapp.com/login", {
-            username: loginData.username,
-            password: loginData.password
-        }).then((res) => {
-                console.log(res);
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'success',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                // @ts-ignore
-                const {token} = res.data;
-                window.localStorage.setItem("access-token", token);
-                props.history.push("/")
-            }
-        ).catch(err => {
-            console.log(err);
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong!',
-            })
-        })
+        loginHandler(loginData);
     }
     return (
         <div className="container">
@@ -96,4 +74,16 @@ const Login: React.FC<ILoginProps> = (props) => {
     )
 }
 
-export default withRouter<ILoginProps, any>(Login)
+const mapStateToProps = (state: State) => {
+    return {
+        token: state.login.token
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return {
+        loginHandler: (loginData: { username: string; password: string; }) => dispatch<any>(login(loginData)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter<ILoginProps, any>(Login))

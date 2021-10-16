@@ -1,5 +1,7 @@
 import React from 'react';
 import {Redirect, Route, RouteProps} from 'react-router-dom';
+import {connect} from 'react-redux'
+import {State} from "../../store/store";
 
 export type ProtectedRouteProps = {
     isAuthenticated: boolean;
@@ -8,6 +10,7 @@ export type ProtectedRouteProps = {
 
 const PrivateRoute: React.FC<ProtectedRouteProps> = (props) => {
     const {isAuthenticated, authenticationPath, ...routeProps} = props;
+    console.log(props)
     if (isAuthenticated) {
         return <Route {...routeProps}/>
     }else{
@@ -15,4 +18,10 @@ const PrivateRoute: React.FC<ProtectedRouteProps> = (props) => {
     }
 }
 
-export {PrivateRoute}
+const mapStateToProps = (state: State) => {
+    return {
+        isAuthenticated: state.login.isAuthenticated
+    }
+}
+
+export default connect(mapStateToProps)(PrivateRoute)
