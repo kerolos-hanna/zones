@@ -52,6 +52,7 @@ export const logout = () => {
         type: ActionTypes.LOGOUT,
         payload: {token: ""}
     }
+    window.localStorage.setItem("access-token", "")
     return (dispatch: Dispatch<loginAction>) => {
         dispatch(action);
     }
