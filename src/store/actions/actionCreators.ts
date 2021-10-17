@@ -1,14 +1,14 @@
-import axios from 'axios';
-
+// import axios from 'axios';
+import axios from '../../axios/axiosInstance';
 import {ActionTypes} from './actionTypes';
 import {zoneAction, zone} from '../reducer/zonesReducer'
 import Swal from "sweetalert2";
 import {Dispatch} from "redux";
 import {loginAction} from "../reducer/loginReducer";
 
-export const login = (loginData: {username: string, password: string}) => {
+export const login = (loginData: { username: string, password: string }) => {
     return (dispatch: Dispatch<loginAction>) => {
-        axios.post("https://zones-backend-halan.herokuapp.com/login", {
+        axios.post("/login", {
             username: loginData.username,
             password: loginData.password
         }).then((res) => {
@@ -60,7 +60,7 @@ export const logout = () => {
 
 export const getAllZones = () => {
     return (dispatch: Dispatch<zoneAction>) => {
-        axios.get("https://zones-backend-halan.herokuapp.com/zones", {
+        axios.get("/zones", {
             headers: {
                 "Authorization": `Bearer ${window.localStorage.getItem('access-token')}`
             }
@@ -87,7 +87,7 @@ export const addZone = (zone: zone) => {
         }
     }
     return (dispatch: Dispatch<zoneAction>) => {
-        axios.post("https://zones-backend-halan.herokuapp.com/zones", {
+        axios.post("/zones", {
             label: zone.label,
             color: zone.color,
             points: zone.points
@@ -126,7 +126,7 @@ export const updateZone = (id: string | undefined, zone: zone) => {
         payload: {zones: []}
     }
     return (dispatch: Dispatch<zoneAction>) => {
-        axios.put(`https://zones-backend-halan.herokuapp.com/zones/${id}`, {
+        axios.put(`/zones/${id}`, {
             label: zone.label,
             color: zone.color,
             points: zone.points
@@ -144,7 +144,10 @@ export const updateZone = (id: string | undefined, zone: zone) => {
                 timer: 1500
             })
             dispatch(action)
-            getAllZones()
+            // getAllZones()
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000)
         }).catch(err => {
             console.log(err)
             Swal.fire({
@@ -162,7 +165,7 @@ export const deleteZone = (id: string | undefined) => {
         payload: {zones: []}
     }
     return (dispatch: Dispatch<zoneAction>) => {
-        axios.delete(`https://zones-backend-halan.herokuapp.com/zones/${id}`, {
+        axios.delete(`/zones/${id}`, {
             headers: {
                 "Authorization": `Bearer ${window.localStorage.getItem('access-token')}`
             }
@@ -176,7 +179,10 @@ export const deleteZone = (id: string | undefined) => {
                 timer: 1500
             })
             dispatch(action)
-            getAllZones()
+            // getAllZones()
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000)
         }).catch(err => {
             console.log(err)
             Swal.fire({
